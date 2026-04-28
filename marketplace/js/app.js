@@ -4,7 +4,7 @@
 const CONFIG = {
   APP_NAME: 'Media Tech Support',
   // Replace with your deployed Google Apps Script Web App URL
-  API_URL: 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL',
+  API_URL: 'https://script.google.com/macros/s/AKfycbw8aEuPLoZ4nBPqMZFMlNd-TuRFqUKbcmpn7iJHfDErn3YTdY5RiZeqOVdbMdTT6u8D/exec',
   PAYMENT_ACCOUNTS: {
     nayapay: { number: '03198595421', name: 'Muhammad Ramzan ul sami' },
     easypaisa: { number: '03198595421', name: 'Muhammad Ramzan Al Sami' },
