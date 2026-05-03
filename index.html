@@ -680,75 +680,68 @@ function loadServices(){
 }
 
 function saveService(){
+
   const saveBtn = document.getElementById('saveServiceBtn');
   const saveBtnText = document.getElementById('saveBtnText');
-  
-  // Show saving animation
+
   saveBtn.disabled = true;
-  saveBtnText.innerHTML = '<i data-lucide="loader" style="width:16px;height:16px;" class="saving-animation"></i> Saving...';
-  lucide.createIcons();
-  
- post({
-  action:'saveService',
-  serviceID: sid.value,
-  platform: platform.value,
-  serviceName: name.value,
-  rate: rate.value,
-  per1k: per1k.value,
-  minQty: min.value,
-  maxQty: max.value,
+  saveBtnText.innerHTML = 'Saving...';
 
-  requireEmail: reqEmail.value,
-  requireLink: reqLink.value,
-  customComments: custom.value,
+  post({
+    action:'saveService',
 
-  targetCountry: document.getElementById('targetCountry').value,
-  isAccount: document.getElementById('isAccount').value,
+    serviceID: sid.value,
+    platform: platform.value,
+    serviceName: name.value,
+    rate: rate.value,
+    per1k: per1k.value,
+    minQty: min.value,
+    maxQty: max.value,
 
-  serviceRefill: document.getElementById('serviceRefill').value,
-  refillDays: document.getElementById('refillDays').value,
+    requireEmail: reqEmail.value,
+    requireLink: reqLink.value,
+    customComments: custom.value,
 
-  description: desc.value,
-  deliveryTime: time.value
-}).then(()=>{
-    // Reset button
+    serviceRefill: document.getElementById('serviceRefill').value,
+    refillDays: document.getElementById('refillDays').value,
+
+    description: desc.value,
+    deliveryTime: time.value
+
+  }).then(()=>{
     saveBtn.disabled = false;
     saveBtnText.textContent = 'Save Service';
     clearServiceForm();
     loadServices();
-  }).catch(err => {
-    // Handle error
+  }).catch(()=>{
     saveBtn.disabled = false;
     saveBtnText.textContent = 'Save Service';
   });
 }
-
 function editService(id, platformVal, nameVal, rateVal, per1kVal, minVal, maxVal, reqEmailVal, reqLinkVal, customVal, descVal, timeVal){
-  document.getElementById('sid').value = id;
-  document.getElementById('platform').value = platformVal;
-  document.getElementById('name').value = nameVal;
-  document.getElementById('rate').value = rateVal;
-  document.getElementById('per1k').value = per1kVal;
-  document.getElementById('min').value = minVal;
-  document.getElementById('max').value = maxVal;
-  document.getElementById('reqEmail').value = reqEmailVal;
-  document.getElementById('reqLink').value = reqLinkVal;
-  document.getElementById('custom').value = customVal;
-  document.getElementById('desc').value = descVal;
-  document.getElementById('time').value = timeVal;
-   document.getElementById('isAccount').value = isAccountVal;
-  document.getElementById('serviceRefill').value = serviceRefillVal;
-  document.getElementById('refillDays').value = refillDaysVal;
-  
-  // Show Clear and Add New buttons, hide Save button text change
+
+  sid.value = id;
+  platform.value = platformVal;
+  name.value = nameVal;
+  rate.value = rateVal;
+  per1k.value = per1kVal;
+  min.value = minVal;
+  max.value = maxVal;
+  reqEmail.value = reqEmailVal;
+  reqLink.value = reqLinkVal;
+  custom.value = customVal;
+  desc.value = descVal;
+  time.value = timeVal;
+
+  // Safe defaults
+  document.getElementById('serviceRefill').value = "false";
+  document.getElementById('refillDays').value = "";
+
   document.getElementById('clearServiceBtn').style.display = 'inline-flex';
   document.getElementById('addNewServiceBtn').style.display = 'inline-flex';
-  
-  // Navigate to services tab
-  show('services');
-  document.querySelector('.form-grid').scrollIntoView({behavior:'smooth'});
-}
 
+  show('services');
+}
 function deleteService(id){
   if(confirm("Delete this service?")){
     post({action:'deleteService', serviceID:id}).then(()=>loadServices());
@@ -761,27 +754,26 @@ function startNewService(){
 }
 
 function clearServiceForm(){
-  document.getElementById('sid').value='';
-  document.getElementById('platform').value='';
-  document.getElementById('name').value='';
-  document.getElementById('rate').value='';
-  document.getElementById('per1k').value='';
-  document.getElementById('min').value='';
-  document.getElementById('max').value='';
-  document.getElementById('reqEmail').value='';
-  document.getElementById('reqLink').value='';
-  document.getElementById('custom').value='';
-  document.getElementById('desc').value='';
-  document.getElementById('time').value='';
-   document.getElementById('isAccount').value = isAccountVal;
-  document.getElementById('serviceRefill').value = serviceRefillVal;
-  document.getElementById('refillDays').value = refillDaysVal;
-  
-  // Hide Clear and Add New buttons
+
+  sid.value='';
+  platform.value='';
+  name.value='';
+  rate.value='';
+  per1k.value='';
+  min.value='';
+  max.value='';
+  reqEmail.value='';
+  reqLink.value='';
+  custom.value='';
+  desc.value='';
+  time.value='';
+
+  document.getElementById('serviceRefill').value = "false";
+  document.getElementById('refillDays').value = "";
+
   document.getElementById('clearServiceBtn').style.display = 'none';
   document.getElementById('addNewServiceBtn').style.display = 'none';
 }
-
 // ORDERS
 function loadOrders(){
   post({action:'getAllOrders'}).then(d=>{
