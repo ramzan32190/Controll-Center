@@ -485,6 +485,32 @@ select {
        <div class="form-group">
         <label>Custom Comments</label> <input id="custom" placeholder="true/false">
        </div>
+       <!-- ✅ REFILL ENABLE -->
+<div class="form-group">
+  <label>Refill Available</label>
+  <select id="serviceRefill">
+    <option value="false">No</option>
+    <option value="true">Yes</option>
+  </select>
+</div>
+
+<!-- ✅ REFILL DAYS -->
+<div class="form-group" id="refillDaysBox">
+  <label>Refill Days</label>
+
+  <!-- Preset -->
+  <select id="refillDaysPreset" onchange="setRefillDays(this.value)">
+    <option value="">Select preset</option>
+    <option value="30">30 Days</option>
+    <option value="60">60 Days</option>
+    <option value="90">90 Days</option>
+    <option value="365">1 Year</option>
+    <option value="lifetime">Lifetime</option>
+  </select>
+
+  <!-- Custom -->
+  <input id="refillDays" placeholder="Or enter custom days (e.g., 45)">
+</div>
        <div class="form-group">
         <label>Description</label> <input id="desc" placeholder="Service details">
        </div>
@@ -539,7 +565,7 @@ select {
    </div>
   </div>
   <script>
-const API="https://script.google.com/macros/s/AKfycbxQ1FPKu_fy357gG2-nNiT58iO8omEbYl8FKelgWB40obsGF8Ie2u3eLPiBsLIxbuEGyw/exec";
+const API="https://script.google.com/macros/s/AKfycbzEG_8cqIDmea6pCtZ6rLnsgF9mVqk4sahbw_HRrcNurUo7A0V4AEgJpfKX3pPm3bs7Kg/exec";
 
 function post(d){return fetch(API,{method:'POST',body:JSON.stringify(d)}).then(r=>r.json())}
 
@@ -662,21 +688,29 @@ function saveService(){
   saveBtnText.innerHTML = '<i data-lucide="loader" style="width:16px;height:16px;" class="saving-animation"></i> Saving...';
   lucide.createIcons();
   
-  post({
-    action:'saveService',
-    serviceID:document.getElementById('sid').value,
-    platform:document.getElementById('platform').value,
-    serviceName:document.getElementById('name').value,
-    rate:document.getElementById('rate').value,
-    per1k:document.getElementById('per1k').value,
-    minQty:document.getElementById('min').value,
-    maxQty:document.getElementById('max').value,
-    requireEmail:document.getElementById('reqEmail').value,
-    requireLink:document.getElementById('reqLink').value,
-    customComments:document.getElementById('custom').value,
-    description:document.getElementById('desc').value,
-    deliveryTime:document.getElementById('time').value
-  }).then(()=>{
+ post({
+  action:'saveService',
+  serviceID: sid.value,
+  platform: platform.value,
+  serviceName: name.value,
+  rate: rate.value,
+  per1k: per1k.value,
+  minQty: min.value,
+  maxQty: max.value,
+
+  requireEmail: reqEmail.value,
+  requireLink: reqLink.value,
+  customComments: custom.value,
+
+  targetCountry: document.getElementById('targetCountry').value,
+  isAccount: document.getElementById('isAccount').value,
+
+  serviceRefill: document.getElementById('serviceRefill').value,
+  refillDays: document.getElementById('refillDays').value,
+
+  description: desc.value,
+  deliveryTime: time.value
+}).then(()=>{
     // Reset button
     saveBtn.disabled = false;
     saveBtnText.textContent = 'Save Service';
@@ -702,6 +736,9 @@ function editService(id, platformVal, nameVal, rateVal, per1kVal, minVal, maxVal
   document.getElementById('custom').value = customVal;
   document.getElementById('desc').value = descVal;
   document.getElementById('time').value = timeVal;
+   document.getElementById('isAccount').value = isAccountVal;
+  document.getElementById('serviceRefill').value = serviceRefillVal;
+  document.getElementById('refillDays').value = refillDaysVal;
   
   // Show Clear and Add New buttons, hide Save button text change
   document.getElementById('clearServiceBtn').style.display = 'inline-flex';
@@ -736,6 +773,9 @@ function clearServiceForm(){
   document.getElementById('custom').value='';
   document.getElementById('desc').value='';
   document.getElementById('time').value='';
+   document.getElementById('isAccount').value = isAccountVal;
+  document.getElementById('serviceRefill').value = serviceRefillVal;
+  document.getElementById('refillDays').value = refillDaysVal;
   
   // Hide Clear and Add New buttons
   document.getElementById('clearServiceBtn').style.display = 'none';
@@ -893,6 +933,24 @@ function updateDashboard(){
     lucide.createIcons();
   });
 }
+   document.addEventListener("DOMContentLoaded", function(){
+
+  const refillSelect = document.getElementById('serviceRefill');
+  const refillBox = document.getElementById('refillDaysBox');
+
+  if(refillSelect && refillBox){
+
+    // Run once on load
+    refillBox.style.display = refillSelect.value === "true" ? "block" : "none";
+
+    // Listen for changes
+    refillSelect.addEventListener('change', function(){
+      refillBox.style.display = this.value === "true" ? "block" : "none";
+    });
+
+  }
+
+});
 
 // Initialize
 checkSession();
