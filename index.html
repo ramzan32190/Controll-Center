@@ -687,28 +687,33 @@ function saveService(){
   saveBtn.disabled = true;
   saveBtnText.innerHTML = 'Saving...';
 
-  post({
-    action:'saveService',
+ post({
+  action:'saveService',
 
-    serviceID: sid.value,
-    platform: platform.value,
-    serviceName: name.value,
-    rate: rate.value,
-    per1k: per1k.value,
-    minQty: min.value,
-    maxQty: max.value,
+  serviceID: sid.value,
+  platform: platform.value,
+  serviceName: name.value,
+  rate: rate.value,
+  per1k: per1k.value,
+  minQty: min.value,
+  maxQty: max.value,
 
-    requireEmail: reqEmail.value,
-    requireLink: reqLink.value,
-    customComments: custom.value,
+  customComments: custom.value,
 
-    serviceRefill: document.getElementById('serviceRefill').value,
-    refillDays: document.getElementById('refillDays').value,
+  // ✅ ADD THESE MISSING FIELDS
+  randomComments: false,
+  targetCountry: "",
+  isAccount: false,
 
-    description: desc.value,
-    deliveryTime: time.value
+  requireLink: reqLink.value,
+  requireEmail: reqEmail.value,
 
-  }).then(()=>{
+  serviceRefill: document.getElementById('serviceRefill').value,
+  refillDays: document.getElementById('refillDays').value,
+
+  description: desc.value,
+  deliveryTime: time.value
+}).then(()=>{
     saveBtn.disabled = false;
     saveBtnText.textContent = 'Save Service';
     clearServiceForm();
