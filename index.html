@@ -828,6 +828,23 @@ function loadUsers(){
 
 function toggleUser(id){post({action:'toggleUser',userID:id}).then(loadUsers)}
 
+   function formatScreenshotUrl(url){
+
+  if(!url) return '#';
+
+  // Convert Google Drive share links
+  if(url.includes("drive.google.com/file/d/")){
+
+    const match = url.match(/\/d\/(.*?)\//);
+
+    if(match && match[1]){
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+  }
+
+  return url;
+}
+
 // PAYMENTS
 function loadPayments(){
 
@@ -869,7 +886,7 @@ function loadPayments(){
         </td>
 
         <td class="link-cell">
-          <a href='${p[5]}' target='_blank'>
+          <a href='${formatScreenshotUrl(p[5])}' target='_blank'>
             <i data-lucide="eye" style="width:14px;height:14px;"></i>
             View
           </a>
@@ -889,10 +906,7 @@ function loadPayments(){
 
     lucide.createIcons();
 
-    updateDashboard();
-
-  });
-
+});
 }
    function approve(id){post({action:'approvePayment',paymentID:id}).then(loadPayments)}
 function reject(id){post({action:'rejectPayment',paymentID:id}).then(loadPayments)}
