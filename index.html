@@ -830,27 +830,70 @@ function toggleUser(id){post({action:'toggleUser',userID:id}).then(loadUsers)}
 
 // PAYMENTS
 function loadPayments(){
-  post({action:'getPayments'}).then(d=>{
+
+  post({action:'getPayments'}).then(r=>{
+
+    const d = r.data || r;
+
     let h='<tr><th>Payment ID</th><th>Email</th><th>Amount</th><th>Status</th><th>Actions</th><th>Screenshot</th></tr>';
+
     d.forEach(p=>{
+
       h+=`<tr>
         <td><strong>${p[0]}</strong></td>
         <td>${p[1]}</td>
         <td><strong>$${p[2]}</strong></td>
-        <td><span class="status-badge ${p[6]=='pending'?'status-pending':p[6]=='approved'?'status-completed':'status-cancelled'}">${p[6]}</span></td>
-        <td class="action-buttons">
-          <button class="btn btn-success small" onclick="approve('${p[0]}')"><i data-lucide="check" style="width:14px;height:14px;"></i> Approve</button>
-          <button class="btn btn-danger small" onclick="reject('${p[0]}')"><i data-lucide="x" style="width:14px;height:14px;"></i> Reject</button>
-        </td>
-        <td class="link-cell"><a href='${p[5]}' target='_blank'><i data-lucide="eye" style="width:14px;height:14px;"></i> View</a></td>
-      </tr>`;
-    });
-    paymentsTable.innerHTML=h;
-    lucide.createIcons();
-    updateDashboard();
-  });
-}
 
+        <td>
+          <span class="status-badge ${
+            p[6]=='pending'
+              ? 'status-pending'
+              : p[6]=='approved'
+              ? 'status-completed'
+              : 'status-cancelled'
+          }">
+            ${p[6]}
+          </span>
+        </td>
+
+        <td class="action-buttons">
+          <button class="btn btn-success small" onclick="approve('${p[0]}')">
+            <i data-lucide="check" style="width:14px;height:14px;"></i>
+            Approve
+          </button>
+
+          <button class="btn btn-danger small" onclick="reject('${p[0]}')">
+            <i data-lucide="x" style="width:14px;height:14px;"></i>
+            Reject
+          </button>
+        </td>
+
+        <td class="link-cell">
+          <a href='${p[5]}' target='_blank'>
+            <i data-lucide="eye" style="width:14px;height:14px;"></i>
+            View
+          </a>
+        </td>
+      </tr>`;
+
+    });
+
+    paymentsTable.innerHTML = h;
+
+    // ✅ FIXED PENDING COUNT
+    let pending = d.filter(p => 
+      String(p[6]).toLowerCase() === 'pending'
+    ).length;
+
+    document.getElementById('pendingPayments').textContent = pending;
+
+    lucide.createIcons();
+
+    updateDashboard();
+
+  });
+
+}
 function approve(id){post({action:'approvePayment',paymentID:id}).then(loadPayments)}
 function reject(id){post({action:'rejectPayment',paymentID:id}).then(loadPayments)}
 
@@ -914,7 +957,9 @@ function updateDashboard(){
   post({action:'getUsers'}).then(d=>{
     document.getElementById('totalUsers').textContent = d.length;
   });
-  post({action:'getPayments'}).then(d=>{
+  post({action:'getPayments'}).then(r=>{
+
+  const d = r.data || r;
     let pending = d.filter(p => p[6] == 'pending').length;
     document.getElementById('pendingPayments').textContent = pending;
     let h='<tr><th>Payment ID</th><th>Email</th><th>Amount</th><th>Status</th></tr>';
