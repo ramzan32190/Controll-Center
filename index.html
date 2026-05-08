@@ -833,42 +833,51 @@ function loadPayments(){
 
   post({action:'getPayments'}).then(r=>{
 
-  const d = r.data || r;
+    const d = r.data || r;
 
-  let pending = d.filter(p =>
-    String(p[6]).toLowerCase() === 'pending'
-  ).length;
+    let h='<tr><th>Payment ID</th><th>Email</th><th>Amount</th><th>Status</th><th>Actions</th><th>Screenshot</th></tr>';
 
-  document.getElementById('pendingPayments').textContent = pending;
+    d.forEach(p=>{
 
-  let h='<tr><th>Payment ID</th><th>Email</th><th>Amount</th><th>Status</th></tr>';
+      h+=`<tr>
+        <td><strong>${p[0]}</strong></td>
+        <td>${p[1]}</td>
+        <td><strong>$${p[2]}</strong></td>
 
-  d.slice(0,5).forEach(p=>{
+        <td>
+          <span class="status-badge ${
+            p[6]=='pending'
+              ? 'status-pending'
+              : p[6]=='approved'
+              ? 'status-completed'
+              : 'status-cancelled'
+          }">
+            ${p[6]}
+          </span>
+        </td>
 
-    h+=`<tr>
-      <td><strong>${p[0]}</strong></td>
-      <td>${p[1]}</td>
-      <td>$${p[2]}</td>
-      <td>
-        <span class="status-badge ${
-          p[6]=='pending'
-            ? 'status-pending'
-            : p[6]=='approved'
-            ? 'status-completed'
-            : 'status-cancelled'
-        }">
-          ${p[6]}
-        </span>
-      </td>
-    </tr>`;
+        <td class="action-buttons">
+          <button class="btn btn-success small" onclick="approve('${p[0]}')">
+            <i data-lucide="check" style="width:14px;height:14px;"></i>
+            Approve
+          </button>
 
-  });
+          <button class="btn btn-danger small" onclick="reject('${p[0]}')">
+            <i data-lucide="x" style="width:14px;height:14px;"></i>
+            Reject
+          </button>
+        </td>
 
-  document.getElementById('recentPaymentsTable').innerHTML = h;
+        <td class="link-cell">
+          <a href='${p[5]}' target='_blank'>
+            <i data-lucide="eye" style="width:14px;height:14px;"></i>
+            View
+          </a>
+        </td>
+      </tr>`;
 
-  lucide.createIcons();
+    });
 
-});
     paymentsTable.innerHTML = h;
 
     // ✅ FIXED PENDING COUNT
@@ -885,7 +894,7 @@ function loadPayments(){
   });
 
 }
-function approve(id){post({action:'approvePayment',paymentID:id}).then(loadPayments)}
+   function approve(id){post({action:'approvePayment',paymentID:id}).then(loadPayments)}
 function reject(id){post({action:'rejectPayment',paymentID:id}).then(loadPayments)}
 
 // ADMIN SETTINGS
